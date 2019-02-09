@@ -8,8 +8,8 @@ I settled on an idea of some sort of texting game/analyzer combo app.
 I was able to set anonymous user login and texting with data storage and a 5x5 tic-tac-toe game that can be played via texted instructions.
 The tic-tac-toe game is really just a placeholder for a better type game but I wanted to get the basic implementation of multiple users interacting via text in an ongoing game that is updated and stored in local state.
 
-## User Log-in:           ## Chat game screen:
-![](assets/IMG_9688.PNG)  ![](assets/IMG_9688.PNG)
+## User Log-in:                ## Chat game screen:
+![](assets/IMG_9688.PNG)       ![](assets/IMG_9688.PNG)
  
 My future vision for this app would be to have a few mini games and analyzers to choose from. The mini games would take simple commands as seen in the current tic-tac-toe game. Some games could involve drawing together or building somethign together. The analyzer option would involve using the JS.brain neural network library to do comparisons of texts. The sample I found as reference was to train the network to distinguish between texts from Kim Kardashian and Donald Trump. So you could train the app to compare yourself and whoever you wanted, ie: when you type a text the app returns how similar your text is to whoever you have trained it to compare.
 
