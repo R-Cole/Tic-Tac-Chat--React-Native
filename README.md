@@ -1,6 +1,6 @@
 # REACT NATIVE Flex Week Project
 
-My loose ideas going into this week were to work with things I hadn't worked with during our React section. I was thinking about a game of some type, graphics, animation, sound manipulation, neural networks, and data exchange via users.
+My loose ideas going into this week were to work with things I hadn't worked with during our React section. The areas I was thinking about delving into were game making, graphics, animation, sound manipulation, neural networks, and data exchange via users.
 
 Early on I found a chat tutorial that involved using react native and the giftedchat library utilizing the firebase real-time database system that Ray had mentioned.
 I settled on an idea of some sort of texting game/analyzer combo app. 
