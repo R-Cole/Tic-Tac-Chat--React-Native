@@ -1,9 +1,10 @@
 // });
 
 import React, { Component } from 'react';
-import { Button, TouchableOpacity, View, Text, TextInput, StyleSheet } from 'react-native';
+import { Image,Button, TouchableOpacity, View, Text, TextInput, StyleSheet } from 'react-native';
 import firebase from 'firebase';
 import Fire from '../Fire';
+import Header from '../assets/tic_tac_chat_header.png';
 
 class Main extends React.Component {
   constructor(props){
@@ -50,7 +51,7 @@ class Main extends React.Component {
   
   render() {
 
-    let visibleLogout = <Text>................................</Text>;
+    let visibleLogout = <Text style={styles.special}> </Text>;
 
     if(this.state.name !== ''){
 
@@ -61,7 +62,12 @@ class Main extends React.Component {
 
     return (
     
-    <View>
+    <View style={{flex: 1, backgroundColor: 'powderblue'}}>
+      
+      <Image source={Header} style={styles.header}/>
+      
+       
+      <Text style={styles.special}> </Text>
       <Text style={styles.title}>Enter Your Name: </Text>
       <TextInput 
         style={styles.nameInput}
@@ -69,12 +75,13 @@ class Main extends React.Component {
         onChangeText={this.onChangeText}
         value={this.state.name}
       />
-      <Text>................................</Text>
-      <Text>CURRENT USER NAME IS: {this.state.name}</Text>
+      <Text style={styles.special}> </Text>
+      <Text style={styles.title} >CURRENT USER IS: {this.state.name}</Text>
+      <Text style={styles.special}> </Text>
       <TouchableOpacity >
         <Button title='LOG ME IN'style={styles.buttonText} onPress={this.onPress} >LOG IN ANONYMOUSLY</Button>
       </TouchableOpacity>
-      <Text>--->{this.state.showthis}</Text>
+      <Text style={styles.special}> </Text>
       {visibleLogout}
     </View>
 
@@ -92,7 +99,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: offset,
     borderColor: '#111111',
-    borderWidth: 1
+    borderWidth: 1,
+    backgroundColor: 'white',
 
   },
   title: {
@@ -101,9 +109,33 @@ const styles = StyleSheet.create({
     fontSize: offset
   },
   buttonText: {
+    borderRadius: 10,
+    paddingHorizontal: offset,
+    borderColor: '#111111',
+    borderWidth: 1,
+    backgroundColor: 'yellow',
     marginLeft:offset,
     fontSize: offset
-  }
+  },
+  special: {
+    textAlign: 'center', // <-- the magic
+    fontWeight: 'bold',
+    fontSize: 5,
+    marginTop: 0,
+    width: 400,
+    backgroundColor: '#499999',
+  },
+  larger: {
+    textAlign: 'center', // <-- the magic
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginTop: 0,
+    width: 300 
+  },
+  header: {
+    position: 'relative',
+    top: 0,
+    left: -64},
 
 });
 
