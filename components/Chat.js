@@ -34,6 +34,7 @@ class Chat extends React.Component {
 
       gameMode: 'Active',
       currentTeam: 'X',
+      gameMessage: 'Your move X Team',
       messages: [],
       types: setTypes,
       stuff:'' 
@@ -58,11 +59,13 @@ class Chat extends React.Component {
       //if(this.state){
 
       let newValue = 0;
+      let newTeam = this.state.currentTeam;
+      let newMessage = this.state.gameMessage;
  
       for(let i=0;i<message.text.length;i++){
  
         //X move is found
-        if(message.text[i].toLowerCase() === 'x' && message.text[i+1].toLowerCase() === 'x' && message.text[i+2].toLowerCase() === 'x'){
+        if(this.state.currentTeam === 'X' && message.text[i].toLowerCase() === 'x' && message.text[i+1].toLowerCase() === 'x' && message.text[i+2].toLowerCase() === 'x'){
  
           console.log('xxx is found');
 
@@ -83,6 +86,9 @@ class Chat extends React.Component {
           if(newValue < 0 || newValue > 25){
             return;
           }
+
+          newTeam = 'O';
+          newMessage = 'Your move O Team';
 
           let newType = {
             type: 'X'
@@ -105,7 +111,7 @@ class Chat extends React.Component {
         }
 
         //O move is found
-        if(message.text[i].toLowerCase() === 'o' && message.text[i+1].toLowerCase() === 'o' && message.text[i+2].toLowerCase() === 'o'){
+        if(this.state.currentTeam === 'O' && message.text[i].toLowerCase() === 'o' && message.text[i+1].toLowerCase() === 'o' && message.text[i+2].toLowerCase() === 'o'){
  
           console.log('ooo is found');
 
@@ -126,6 +132,9 @@ class Chat extends React.Component {
           if(newValue < 0 || newValue > 25){
             return;
           }
+
+          newTeam = 'X';
+          newMessage = 'Your move X Team';
 
           let newType = {
             type: 'O'
@@ -159,13 +168,32 @@ class Chat extends React.Component {
           for (let i=1;i<26;i++){
             newArray[i]={ type:'UA' };
           }
+
+          let decider = Math.floor(Math.random() * 1);
+
+          if(decider === 0){
+
+            newTeam = 'X';
+            newMessage = 'Ok Team X You Go First!';
+
+          }
+
+          if(decider === 1){
+
+            newTeam = 'O';
+            newMessage = 'Ok Team O You Go First!';
+
+          }
+          
           
         }
  
       }
-
+  
       this.setState({
 
+        currentTeam: newTeam,
+        gameMessage: newMessage,
         types: newArray
 
       })
@@ -292,8 +320,9 @@ render(){
              <Image source={setTypes[23]} style={styles.pos_23}/>
              <Image source={setTypes[24]} style={styles.pos_24}/>
              <Image source={setTypes[25]} style={styles.pos_25}/>
-    
+             <View style={styles.posText}><Text style={styles.larger}>{this.state.gameMessage}</Text></View>
             </View>
+           
           
           <GiftedChat
             messages={this.state.messages}
@@ -356,6 +385,18 @@ const styles = StyleSheet.create({
     left: 34,
     flex: 1
   },
+  posText: {
+    position: 'absolute',
+    top: testY[25] + 49,
+    left: testX[1] + 32,
+    textAlign: 'center' // <-- the magic
+  },
+  larger: {
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginTop: 0,
+    width: 300 
+  },
   pos_1: holder[1],
   pos_2: holder[2],
   pos_3: holder[3],
@@ -380,7 +421,7 @@ const styles = StyleSheet.create({
   pos_22: holder[22],
   pos_23: holder[23],
   pos_24: holder[24],
-  pos_25: holder[25] 
+  pos_25: holder[25]
 
 });
 
