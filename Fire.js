@@ -13,7 +13,7 @@ class Fire {
 
     //AIzaSyBSUZ9zciYVpXJDng0WBJALINaJWTW4f7A 
 
-    if(firebase.apps.length){
+    if(!firebase.apps.length){
 
       firebase.initializeApp({
         apiKey: "AIzaSyDxOdznvEVog7PVf4srNsq7wdiw0muNiXA",
