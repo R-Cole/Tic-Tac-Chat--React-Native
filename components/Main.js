@@ -16,8 +16,6 @@ class Main extends React.Component {
  
     }
 
-    //this.onChangeText = this.onChangeText.bind(this);
-
   }
 
     onChangeText = (name) => {
