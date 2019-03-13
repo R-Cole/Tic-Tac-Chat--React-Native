@@ -13,19 +13,24 @@ class Fire {
 
     //AIzaSyBSUZ9zciYVpXJDng0WBJALINaJWTW4f7A 
 
+    if(firebase.apps.length){
 
-    firebase.initializeApp({
-      apiKey: "AIzaSyDxOdznvEVog7PVf4srNsq7wdiw0muNiXA",
-      authDomain: "awesomeness-b36ce.firebaseapp.com",
-      databaseURL: "https://awesomeness-b36ce.firebaseio.com",
-      projectId: "awesomeness-b36ce",
-      storageBucket: "awesomeness-b36ce.appspot.com",
-      messagingSenderId: "1098256931153"
-    });
+      firebase.initializeApp({
+        apiKey: "AIzaSyDxOdznvEVog7PVf4srNsq7wdiw0muNiXA",
+        authDomain: "awesomeness-b36ce.firebaseapp.com",
+        databaseURL: "https://awesomeness-b36ce.firebaseio.com",
+        projectId: "awesomeness-b36ce",
+        storageBucket: "awesomeness-b36ce.appspot.com",
+        messagingSenderId: "1098256931153"
+      })
 
-    
+    } 
+    else{
 
+      firebase.app();
 
+    }
+     
   }
   
  
@@ -54,8 +59,7 @@ class Fire {
   get ref(){
     return firebase.database().ref('messages');
   }
-
-
+ 
   parse = snapshot => {
 
     const { timestamp: numberStamp,text,user } = snapshot.val();
@@ -76,16 +80,14 @@ class Fire {
     return message;
 
   };
-
-
+ 
   on = callback => {
     this.ref
     .limitToLast(20)
     .on('child_added',snapshot => callback(this.parse(snapshot)));
 
   }
- 
-
+  
   ///// SEND MESSAGES
   get uid(){
     return (firebase.auth().currentUser || {}).uid;
@@ -111,9 +113,7 @@ class Fire {
     }
 
   };
-
-
-
+ 
   append = message => {
 
     console.log('message being pushed: ',message);
@@ -125,8 +125,7 @@ class Fire {
   off(){
     this.ref.off();
   }
-
-
+ 
  
 }
 
