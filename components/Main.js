@@ -66,7 +66,7 @@ class Main extends React.Component {
       
        
       <Text style={styles.special}> </Text>
-      <Text style={styles.title}>Enter Your Name: </Text>
+      <Text style={styles.title}>Log in anonymously as: </Text>
       <TextInput 
         style={styles.nameInput}
         placeHolder='John Cena'
@@ -74,7 +74,7 @@ class Main extends React.Component {
         value={this.state.name}
       />
       <Text style={styles.special}> </Text>
-      <Text style={styles.title} >CURRENT USER IS: {this.state.name}</Text>
+      <Text style={styles.title} >Currently Logged in as {this.state.name}</Text>
       <Text style={styles.special}> </Text>
       <TouchableOpacity >
         <Button title='LOG ME IN'style={styles.buttonText} onPress={this.onPress} >LOG IN ANONYMOUSLY</Button>

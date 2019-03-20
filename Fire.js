@@ -8,9 +8,7 @@ class Fire {
   }
 
   init = () => {
-
-    console.log('Init has happened');
-
+  
     //AIzaSyBSUZ9zciYVpXJDng0WBJALINaJWTW4f7A 
 
     if(!firebase.apps.length){
@@ -37,7 +35,7 @@ class Fire {
   observeAuth = () => {
     
     firebase.auth().onAuthStateChanged(this.onAuthStateChanged); 
-    console.log('observeAuth has happened');
+     
   }
 
   onAuthStateChanged = user => {
@@ -50,8 +48,6 @@ class Fire {
         alert('Enter name to be Signed-in anonymously');
       }
     }
-
-    //console.log('Fire.js onAuthStateChnged user: ', user);
   
   };
 
@@ -74,9 +70,7 @@ class Fire {
       text,
       user
     };
-
-    //console.log('Fire.js message object: ', message);
-
+  
     return message;
 
   };
@@ -106,19 +100,13 @@ class Fire {
         user,
         timestamp: this.timestamp,  
       };
-
-      //console.log('Fire.js send message? ',message);
-
+  
       this.append(message);
     }
 
   };
  
   append = message => {
-
-    console.log('message being pushed: ',message);
-    console.log(' this.ref?: ', this.ref);
-
     this.ref.push(message);
   }
 

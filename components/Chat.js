@@ -9,8 +9,8 @@ import The_O from '../assets/O_piece.png';
 import The_X from '../assets/X_piece.png';
 import Blank from '../assets/blank_piece.png';
 import dismissKeyboard from 'dismissKeyboard';
-
-
+//////// 
+  
 class Chat extends React.Component {
 
   static navigationOptions = ({ navigation }) => ({
@@ -27,14 +27,12 @@ class Chat extends React.Component {
     }
 
     setTypes[0]='INTENTIONALLY NOT USED!';
-
-    console.log('>>>>>>> LOADING types in state >>>>>>>>: ',setTypes);
  
     this.state = {
 
       gameMode: 'Active',
       currentTeam: 'X',
-      gameMessage: 'Your move X Team',
+      gameMessage: 'Your move Team X',
       messages: [],
       types: setTypes,
       stuff:'' 
@@ -47,174 +45,302 @@ class Chat extends React.Component {
   componentDidMount(){
 
     Fire.shared.on(message => {
-  
-      //kill keyboard once you send text...
-      dismissKeyboard();
  
-      console.log('--------------------------------incoming message: ',message);
-    
-      let newArray=this.state.types;
-
-      //if the state has been loaded...
-      //if(this.state){
-
-      let newValue = 0;
+      const types = this.state.types;
+      let gameMode = this.state.gameMode;
+      let winFlag = 0;
+      let teamCheck;//send team type to win section
+      let newArray=this.state.types;//array of types of (game pieces) gets changed based player moves
       let newTeam = this.state.currentTeam;
       let newMessage = this.state.gameMessage;
+      let newType;
+      let winner;
+
+      const messageLength = message.text.length;
+       
+      //kill keyboard once you send text...
+      dismissKeyboard();
+    
+      const processTurn = (newValue) => {
  
-      for(let i=0;i<message.text.length;i++){
- 
-        //X move is found
-        if(this.state.currentTeam === 'X' && message.text[i].toLowerCase() === 'x' && message.text[i+1].toLowerCase() === 'x' && message.text[i+2].toLowerCase() === 'x'){
- 
-          console.log('xxx is found');
-
-          //Get 2 digit number
-          newValue = (parseInt(message.text[i+3] + message.text[i+4]));
-
-          //Check for 1 digit number
-          if(newValue === NaN){
-            newValue = (parseInt(message.text[i+3]));
-          }
-
-          //No good number found exit
-          if(newValue === NaN){
-            return;
-          }
- 
-          //Value is good but outside of array range
-          if(newValue < 0 || newValue > 25){
-            return;
-          }
-
-          newTeam = 'O';
-          newMessage = 'Your move O Team';
-
-          let newType = {
-            type: 'X'
-          }
-
-          newArray = this.state.types.map((item,index) => {
-
-            if(index === newValue){
-
-              return newType;
-
-            }else{
-
-              return item;
-
-            }
-
-          });
-
-        }
-
-        //O move is found
-        if(this.state.currentTeam === 'O' && message.text[i].toLowerCase() === 'o' && message.text[i+1].toLowerCase() === 'o' && message.text[i+2].toLowerCase() === 'o'){
- 
-          console.log('ooo is found');
-
-          //Get 2 digit number
-          newValue = (parseInt(message.text[i+3] + message.text[i+4]));
-
-          //Check for 1 digit number
-          if(newValue === NaN){
-            newValue = (parseInt(message.text[i+3]));
-          }
-
-          //No good number found exit
-          if(newValue === NaN){
-            return;
-          }
- 
-          //Value is good but outside of array range
-          if(newValue < 0 || newValue > 25){
-            return;
-          }
+        if(this.state.currentTeam === 'O'){
 
           newTeam = 'X';
-          newMessage = 'Your move X Team';
-
-          let newType = {
+          newMessage = 'Your move Team X...';
+          newType = {
             type: 'O'
           }
 
+        }
 
-          newArray = this.state.types.map((item,index) => {
+        if(this.state.currentTeam === 'X'){
 
-            if(index === newValue){
+          newTeam = 'O';
+          newMessage = 'Your move Team O...';
+          newType = {
+            type: 'X'
+          }
 
-              return newType;
+        }
 
-            }else{
 
-              return item;
+        newArray = this.state.types.map((item,index) => {
+
+          if(index === newValue){
+
+            return newType;
+
+          }else{
+
+            return item;
+
+          }
+
+        });
+ 
+
+      }
+     
+      //Is there a message that could be a move command?
+      //Message Command Scan
+      if(messageLength > 2){
+
+        //find first valid command and stop >>
+          //restart 'qqq' -- lower case converted
+          //move commands ooo1 or ooo01 & xxx1 or xxx01 -- lower case converted
+
+        const ooo = 'ooo';
+        const xxx = 'xxx';
+        const qqq = 'qqq';
+
+        //used to decide whether to accept an O or X command based on which team is up
+        const teamCompare = this.state.currentTeam === 'O'
+                            ? ooo
+                            : xxx
+       
+        //Scan message for commands
+        for(let i = 0; i < messageLength; i++){
+        
+        //Scan for --> reset game command
+        if(i >= 2 &&
+          (
+            (message.text[i].toLowerCase()) +
+            (message.text[i - 1].toLowerCase()) +
+            (message.text[i - 2].toLowerCase()) === qqq
+          )
+          ){
+ 
+            //reset game type array
+            for (let z = 1; z < 26; z++){
+              newArray[z]={ type:'UA' };
+            }
+
+            //randomly choose 'o' or 'x' to start
+            let decider = Math.floor(Math.random() * 2);
+  
+            if(decider === 0){
+
+              newTeam = 'X';
+              newMessage = 'Ok, Team X Goes First!';
 
             }
 
-          });
+            if(decider === 1){
 
-           
+              newTeam = 'O';
+              newMessage = 'Ok, Team O Goes First!';
+
+            }
+
+            winFlag = 0;
+             
+            break
+ 
+          }
+
+        //Scan for --> Move commands = any 'ooo' or 'xxx' + valid 1 or 2 digit numbers
+        if(
+            gameMode == 'Active' &&
+            i >= 3 &&
+            ((message.text[i - 1].toLowerCase()) +
+            (message.text[i - 2].toLowerCase()) +
+            (message.text[i - 3].toLowerCase())) === teamCompare 
+          ){
   
-          //console.log('newArray ',newArray);
+            let convert = parseInt(message.text[i]);
+            let convert_2 = parseInt(message.text[i + 1]);
 
-           
+            //1 digit number
+            if(!isNaN(convert) && (isNaN(convert_2) || convert_2 === undefined)){
+
+              let command = 'ooo' + message.text[i];
+               
+              //set game token on board
+              processTurn(convert);
+                
+              break
+
+            }
+
+            //2 digit number less than 25
+            if(!isNaN(convert) && (!isNaN(convert_2)) && (((convert * 10) +  convert_2) < 26)){
+  
+                let converSum = ((convert * 10) +  convert_2);
+
+                //set game token on board
+                processTurn(converSum);
+                 
+                break
+  
+            }
+ 
         }
+  
+        }//end of inner loop
+  
+      }//end of Message Command Scan
 
-        //qqq restart the game
-        if(message.text[i].toLowerCase() === 'q' && message.text[i+1].toLowerCase() === 'q' && message.text[i+2].toLowerCase() === 'q'){
+      //Detect WIN
+  
+       
+      if(newArray.length > 9){
+ 
+        for(let team = 1; team < 3; team = team + 1){
 
-          for (let i=1;i<26;i++){
-            newArray[i]={ type:'UA' };
-          }
+          if(team === 1){teamCheck = 'X';}
+          if(team === 2){teamCheck = 'O';}
 
-          let decider = Math.floor(Math.random() * 1);
+          //console.log('team ',team);
+ 
+          for(let i = 0; i < 4; i = i + 1){
+  
+            //Rows
+            if(
+              newArray[1 + (i * 5)].type === teamCheck &&
+              newArray[2 + (i * 5)].type === teamCheck &&
+              newArray[3 + (i * 5)].type === teamCheck &&
+              newArray[4 + (i * 5)].type === teamCheck &&
+              newArray[5 + (i * 5)].type === teamCheck 
+            ){
+      
+              winner = teamCheck;
+              winFlag = 1;
+              break
+  
+            }
+  
+            //Columns 
+            if(
+              newArray[1 + i].type === teamCheck &&
+              newArray[6 + i].type === teamCheck &&
+              newArray[11 + i].type === teamCheck &&
+              newArray[16 + i].type === teamCheck &&
+              newArray[21 + i].type === teamCheck 
+            ){
+      
+              winner = teamCheck;
+              winFlag = 2;
+              break
 
-          if(decider === 0){
+            } 
+ 
+            //Diagonal left to right
+            if(
+              newArray[1].type === teamCheck &&
+              newArray[7].type === teamCheck &&
+              newArray[13].type === teamCheck &&
+              newArray[19].type === teamCheck &&
+              newArray[25].type === teamCheck 
+            ){
+      
+              winner = teamCheck;
+              winFlag = 3;
+              break
+  
+            }
 
-            newTeam = 'X';
-            newMessage = 'Ok Team X You Go First!';
-
-          }
-
-          if(decider === 1){
-
-            newTeam = 'O';
-            newMessage = 'Ok Team O You Go First!';
-
-          }
-          
-          
+            //Diagonal right to left
+            if(
+              newArray[5].type === teamCheck &&
+              newArray[9].type === teamCheck &&
+              newArray[13].type === teamCheck &&
+              newArray[17].type === teamCheck &&
+              newArray[21].type === teamCheck 
+            ){
+      
+              winner = teamCheck;
+              winFlag = 3;
+              break
+  
+            }
+  
+           }//end of WIN Check loop
+            
         }
  
       }
-  
+       
+      //Add win message
+      if(winFlag > 0){
+ 
+        //Across win
+        if(winFlag === 1){
+          
+          newMessage = `Team ${this.state.currentTeam} Wins Across! qqq to restart!`;
+           
+        }
+
+        //Down Win
+        if(winFlag === 2){
+ 
+          newMessage = `Team ${this.state.currentTeam} Wins Down! qqq to restart!`;         
+            
+        }
+
+        //Diagonal win
+        if(winFlag === 3){
+ 
+          newMessage = `Team ${this.state.currentTeam} Wins Diagonally! qqq to restart!`;         
+            
+        }
+
+        gameMode = 'Win'; 
+
+      }
+
+      if(winFlag === 0){
+
+        gameMode = 'Active';
+
+      }
+
+
       this.setState({
 
+        gameMode: gameMode,
         currentTeam: newTeam,
         gameMessage: newMessage,
         types: newArray
 
       })
-
-      console.log('After set state---> ',this.state.types)
-
-
+ 
       this.setState(previousState => ({
         messages: GiftedChat.append(previousState.messages,message) 
         
       }))
 
 
+       
+      //
+
       
       
     }); 
-
+ 
   };
 
   componentWillUnmount(){
-    console.log('Unmount has happened!');
+     
     Fire.shared.off();
   }
 
@@ -230,12 +356,10 @@ class Chat extends React.Component {
 render(){
 
   let stopper = 0;
-
-  //console.log('----->>>> AT RENDER: this.state.types ',this.state.types[1].type);
-
+  
   if(this.state.gameMode === undefined){stopper = 1;}
 
-  if(this.state.gameMode === 'Active'){stopper = 0;}
+  if(this.state.gameMode === 'Active' || this.state.gameMode === 'Win'){stopper = 0;}
 
   //No State Yet 
   if(stopper === 1) {
@@ -284,9 +408,7 @@ render(){
             }
            
       }
-     
-      //console.log('*** ----------------->current state for types: ',this.state.types);
-     
+       
       //Render View with game pieces
       return(
         <View style={{flex: 1, backgroundColor: 'powderblue'}}>
@@ -320,8 +442,9 @@ render(){
              <Image source={setTypes[23]} style={styles.pos_23}/>
              <Image source={setTypes[24]} style={styles.pos_24}/>
              <Image source={setTypes[25]} style={styles.pos_25}/>
-             <View style={styles.posText}><Text style={styles.larger}>{this.state.gameMessage}</Text></View>
-            </View>
+             <View style={styles.posText}>
+              <Text style={styles.larger}>{this.state.gameMessage}</Text></View>
+             </View>
            
           
           <GiftedChat
@@ -341,7 +464,7 @@ render(){
  
 }//class end
 
-//This sets up the board:
+//This sets up the board and game pieces and detects a win:
     let testX=[];
     let testY=[];
     let testType=[];
@@ -365,14 +488,11 @@ render(){
          
         holder[i] = {position: 'absolute',left:testX[i],top:testY[i]};
 
-        //console.log('object #: ',i,' contents: ',holder[i]);
-  
+         
+        
+ 
     }
-
-     
-
-//console.log('objectTest--------------------------->',holder,holder.index);
-
+  
 const styles = StyleSheet.create({
 
   GameBoardContainer: {
@@ -395,6 +515,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     marginTop: 0,
+    marginLeft: -60,
     width: 300 
   },
   pos_1: holder[1],
