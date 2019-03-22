@@ -1,6 +1,6 @@
-# REACT NATIVE Project
+# Tic-Tac-Chat
 
-My loose ideas going into this week were to work with things I hadn't worked with as much. The areas I was thinking about delving into were games, graphics, animation, sound manipulation, neural networks, and data exchange via users.
+My loose ideas going into this project were to work with things I hadn't worked with as much. The areas I was thinking about delving into were games, graphics, animation, sound manipulation, neural networks, and data exchange via anonymous users.
 
 Early on I found a chat tutorial that involved using the react native gifted chat library utilizing the firebase real-time database system. 
 
